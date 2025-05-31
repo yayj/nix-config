@@ -1,47 +1,51 @@
-{ pkgs, lib, isDarwin, ... }: {
+{ pkgs, lib, homeDirectory, isDarwin, ... }: {
   programs.zsh = {
     enable = true;
 
     package = if isDarwin then pkgs.emptyDirectory else pkgs.zsh;
 
-    autocd = true;
-
     defaultKeymap = "emacs";
 
-    shellAliases = {
-      "-" = "cd -";
+    sessionVariables = {
+      EDITOR = "emacsclient -a '' -t";
+      PAGER = "bat";
+    } // lib.optionalAttrs isDarwin {
+      HOMEBREW_AUTO_UPDATE_SECS = "432000";
+      HOMEBREW_INSTALL_CLEANUP = "1";
+      HOMEBREW_CURLRC = "true";
+    } // lib.optionalAttrs (!isDarwin) {
+      LANG = "en_US.UTF-8";
+      LC_ALL = "en_US.UTF-8";
+      LC_CTYPE = "en_US.UTF-8";
+      LC_MESSAGES = "en_US.UTF-8";
+      LC_TIME = "en_US.UTF-8";
+    };
 
+    shellAliases = {
       em = "emacsclient -a '' -t";
       eeval = "emacsclient -e";
 
-      g = "git";
       gl = "git gl";
       gla = "git gla";
       glv = "git glv";
       glav = "git glav";
       gs = "git st";
 
-      l = "ls -ahl";
-      la = "ls -Ahl";
-      ll = "ls -hl";
-      ls = "ls --color=auto";
-      lsa = "ls -ahl";
-
       j = "jobs -l";
+    };
 
-      r-copy = "rsync -avz --progress -h";
-      r-move = "rsync -avz --progress -h --remove-source-files";
-      r-updt = "rsync -avzu --progress -h";
-      r-sync = "rsync -avzu --delete --progress -h";
-    } // lib.optionalAttrs isDarwin { kssh = "kitty +kitten ssh"; };
-
-    initContent = ''
-      # Loading prompt theme
-      source ${../misc/matt-theme.zsh}
-    '';
+    oh-my-zsh = {
+      enable = true;
+      custom = "${homeDirectory}/.omz";
+      plugins = [ "fzf" "git" "kitty" "rsync" ] ++
+                lib.optionals isDarwin [ "brew" ];
+      theme = "matt";
+    };
 
     profileExtra = ''
       ${pkgs.neofetch}/bin/neofetch
     '';
   };
+
+  home.file.".omz/themes/matt.zsh-theme".source = ../misc/matt-theme.zsh;
 }
