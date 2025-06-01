@@ -1,5 +1,4 @@
-{ config, pkgs, lib, inputs, outputs, username, stateVersion, homeDirectory
-, isDarwin, isServer, withGpg, ... }: {
+{ pkgs, lib, username, stateVersion, homeDirectory, isDarwin, isServer, withGpg, ... }: {
   imports = [
     ./modules/bat.nix
     ./modules/emacs.nix
@@ -10,6 +9,7 @@
     ./modules/gpg.nix
   ] ++ lib.optionals isDarwin [
     ./modules/ssh.nix
+    ./xdg/kitty.nix
   ] ++ lib.optionals isServer [
     ./modules/tmux.nix
   ];
@@ -20,11 +20,5 @@
 
     packages = with pkgs; [ fd neofetch rsync tree ]
                           ++ lib.optionals (!isDarwin) [ netcat-openbsd nettools ];
-
-    file = {
-      "${homeDirectory}/.inputrc".text = ''
-        set completion-ignore-case on
-      '';
-    };
   };
 }
