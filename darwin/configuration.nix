@@ -6,6 +6,11 @@
   fonts.packages = with pkgs; [ fira fira-code lxgw-wenkai ];
 
   homebrew.enable = true;
+  homebrew.onActivation = {
+    cleanup = "zap";
+    autoUpdate = true;
+    upgrade = true;
+  };
 
   networking = {
     hostName = hostname;
@@ -21,6 +26,7 @@
   };
 
   nixpkgs = {
+    config.allowUnfree = true;
     hostPlatform = lib.mkDefault system;
   };
 

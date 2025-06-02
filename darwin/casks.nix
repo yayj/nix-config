@@ -2,12 +2,17 @@ _: {
   homebrew.casks = [
     "arc"
     "bettertouchtool"
-#    "cloudflare-warp"
+    "cloudflare-warp"
     "contexts"
-#    "karabiner-elements"
+    "karabiner-elements"
     "keepingyouawake"
-#    "kitty"
-#    "raycast"
-#    "snipaste"
+    "kitty"
+    "raycast"
+    "snipaste"
   ];
+
+  homebrew.masApps = {
+    "Bitwarden" = 1352778147;
+    "Hidden Bar" = 1452453066;
+  };
 }
