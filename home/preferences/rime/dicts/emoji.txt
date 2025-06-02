@@ -1,0 +1,47 @@
+# Rime table
+# coding: utf-8
+# 自定义文本
+# 此行之后不能写注释
+
+😀	grinning
+😏	smirking
+😘	blowingakiss
+
+🤫	shushing
+🤔	thinking
+🫡	saluting
+🥳	partying
+😎	sunglasses
+
+😮‍💨	exhaling
+
+🥱	yawning
+😓	downcast
+😤	steamfromnose
+
+👌🏼	okay
+✌🏼	victory
+👈🏼	pointing
+👉🏼	pointing
+👆🏼	pointing
+👇🏼	pointing
+🫵🏼	pointing
+👍🏼	thumb
+👎🏼	thumbdown
+🫱🏻‍🫲🏼	handshake
+🙏🏼	thanks
+
+🤦🏼‍♂️	facepalming
+🤷🏼‍♂️	shrugging
+
+🥑	avocado
+🎂	birthday
+☕	coffee
+🍺	beer
+🍻	clinking
+
+🦯	cane
+
+💋	kiss
+💯	hundred
+💤	zzz

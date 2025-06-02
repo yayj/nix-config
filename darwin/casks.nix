@@ -9,6 +9,7 @@ _: {
     "kitty"
     "raycast"
     "snipaste"
+    "squirrel"
   ];
 
   homebrew.masApps = {
