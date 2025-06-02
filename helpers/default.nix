@@ -13,4 +13,13 @@
           if isDarwin then "/Users/${username}" else "/home/${username}";
       };
     };
+
+  mkDarwin = {hostname, system, username ? "matt"}:
+    with inputs;
+    nix-darwin.lib.darwinSystem {
+      specialArgs = {
+        inherit inputs outputs username hostname system;
+      };
+      modules = [ ../darwin ];
+    };
 }
