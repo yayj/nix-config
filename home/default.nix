@@ -5,11 +5,12 @@
     ./modules/fzf.nix
     ./modules/git.nix
     ./modules/zsh.nix
+
+    ./preferences
   ] ++ lib.optionals withGpg [
     ./modules/gpg.nix
   ] ++ lib.optionals isDarwin [
     ./modules/ssh.nix
-    ./xdg/kitty.nix
   ] ++ lib.optionals isServer [
     ./modules/tmux.nix
   ];
