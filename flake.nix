@@ -20,28 +20,28 @@
   outputs = { self, ... }@inputs:
     let
       inherit (self) outputs;
-      helper = import ./helpers {
+      helpers = import ./helpers.nix {
         inherit inputs outputs;
         stateVersion = "25.05";
       };
     in {
       homeConfigurations = {
-        Freedom = helper.mkHome {
+        Freedom = helpers.mkHome {
           hostname = "Freedom";
           system = "x86_64-darwin";
           isServer = false;
         };
-        cc = helper.mkHome {
+        cc = helpers.mkHome {
           hostname = "cc";
           system = "x86_64-linux";
         };
-        ros = helper.mkHome {
+        ros = helpers.mkHome {
           hostname = "ros";
           system = "aarch64-linux";
          };
       };
       darwinConfigurations = {
-        Freedom = helper.mkDarwin {
+        Freedom = helpers.mkDarwin {
           hostname = "Freedom";
           system = "x86_64-darwin";
         };

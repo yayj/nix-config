@@ -5,7 +5,7 @@
     in home-manager.lib.homeManagerConfiguration {
       pkgs = nixpkgs.legacyPackages.${system};
 
-      modules = [ ../home ];
+      modules = [ ./home ];
 
       extraSpecialArgs = {
         inherit inputs outputs username stateVersion isDarwin isServer;
@@ -20,6 +20,6 @@
       specialArgs = {
         inherit inputs outputs username hostname system;
       };
-      modules = [ ../darwin ];
+      modules = [ ./darwin ];
     };
 }
