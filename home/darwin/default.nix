@@ -8,5 +8,6 @@ _: {
     ./karabiner.nix
     ./kitty.nix
     ./rime.nix
+    ./snipaste.nix
   ];
 }
