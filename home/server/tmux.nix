@@ -6,6 +6,6 @@
     mouse = true;
     shortcut = "q";
 
-    extraConfig = builtins.readFile ../misc/tmux.conf;
+    extraConfig = builtins.readFile ./tmux/tmux.conf;
   };
 }

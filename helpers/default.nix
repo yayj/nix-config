@@ -1,5 +1,5 @@
 { inputs, outputs, stateVersion }: {
-  mkHome = { hostname, system, username ? "matt", withGpg ? false , isServer ? true }:
+  mkHome = { hostname, system, username ? "matt", isServer ? true }:
     with inputs;
     let isDarwin = builtins.match ".*-darwin" system == [ ];
     in home-manager.lib.homeManagerConfiguration {
@@ -8,7 +8,7 @@
       modules = [ ../home ];
 
       extraSpecialArgs = {
-        inherit inputs outputs username stateVersion isDarwin withGpg isServer;
+        inherit inputs outputs username stateVersion isDarwin isServer;
         homeDirectory =
           if isDarwin then "/Users/${username}" else "/home/${username}";
       };

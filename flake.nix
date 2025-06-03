@@ -29,7 +29,6 @@
         Freedom = helper.mkHome {
           hostname = "Freedom";
           system = "x86_64-darwin";
-          withGpg = true;
           isServer = false;
         };
         cc = helper.mkHome {

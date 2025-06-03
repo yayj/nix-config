@@ -47,5 +47,5 @@
     '';
   };
 
-  home.file.".omz/themes/matt.zsh-theme".source = ../misc/matt-theme.zsh;
+  home.file.".omz/themes/matt.zsh-theme".source = ./zsh/matt-theme.zsh;
 }
