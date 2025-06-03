@@ -9,4 +9,11 @@
 (setq-default sh-basic-offset 2)
 (setq-default tcl-indent-level 2)
 
+(setq-default make-backup-files nil)
+
 (global-aggressive-indent-mode 1)
+
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+
+(load-theme 'solarized-selenized-light t)

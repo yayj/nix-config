@@ -23,7 +23,7 @@
 
     shellAliases = {
       em = "emacsclient -a '' -t";
-      eeval = "emacsclient -e";
+      ee = "emacsclient -e";
 
       gl = "git gl";
       gla = "git gla";

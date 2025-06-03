@@ -56,3 +56,5 @@ patch:
       ascii_mode: true
     com.microsoft.VSCode: # Visual Studio Code
       ascii_mode: true
+    org.gpgtools.pinentry-mac: # Pinentry-Mac
+      ascii_mode: true

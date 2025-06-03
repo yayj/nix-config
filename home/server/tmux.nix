@@ -3,7 +3,7 @@
     enable = true;
 
     keyMode = "emacs";
-    mouse = true;
+    mouse = false;
     shortcut = "q";
 
     extraConfig = builtins.readFile ./tmux/tmux.conf;
