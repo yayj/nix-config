@@ -32,33 +32,33 @@ in {
   home.file = lib.mkMerge [
     # Global configuration
     {
-      "${confDir}/default.custom.yaml".source = ./default.custom.yaml;
-      "${confDir}/squirrel.custom.yaml".source = ./squirrel.custom.yaml;
+      "${confDir}/default.custom.yaml".source = ./rime/default.custom.yaml;
+      "${confDir}/squirrel.custom.yaml".source = ./rime/squirrel.custom.yaml;
     }
 
     # Double pinyin
     {
-      "${confDir}/double_pinyin_flypy.custom.yaml".source = ./double_pinyin_flypy.custom.yaml;
+      "${confDir}/double_pinyin_flypy.custom.yaml".source = ./rime/double_pinyin_flypy.custom.yaml;
     }
     dpyFiles
 
     # My dictionaries
     {
-      "${confDir}/dicts/math.txt".source = ./dicts/math.txt;
-      "${confDir}/dicts/emoji.txt".source = ./dicts/emoji.txt;
+      "${confDir}/dicts/math.txt".source = ./rime/dicts/math.txt;
+      "${confDir}/dicts/emoji.txt".source = ./rime/dicts/emoji.txt;
     }
 
     # Imported dictionaries
     {
-      "${confDir}/imported.dict.yaml".source = ./imported.dict.yaml;
+      "${confDir}/imported.dict.yaml".source = ./rime/imported.dict.yaml;
     }
     dicts
 
     # Keyboard simulation of CSA layout
     {
-      "${confDir}/csa.schema.yaml".source = ./csa.schema.yaml;
-      "${confDir}/csa.dict.yaml".source = ./csa.dict.yaml;
-      "${confDir}/lua/csa_processor.lua".source = ./lua/csa_processor.lua;
+      "${confDir}/csa.schema.yaml".source = ./rime/csa.schema.yaml;
+      "${confDir}/csa.dict.yaml".source = ./rime/csa.dict.yaml;
+      "${confDir}/lua/csa_processor.lua".source = ./rime/lua/csa_processor.lua;
     }
   ];
 }

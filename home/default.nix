@@ -8,7 +8,6 @@
 
   imports = [
     ./common
-    ./preferences
   ] ++ lib.optionals isDarwin [
     ./darwin
   ] ++ lib.optionals isServer [

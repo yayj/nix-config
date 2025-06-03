@@ -1,3 +1,12 @@
 _: {
-  imports = [ ./gpg.nix ./ssh.nix ];
+  imports = [
+    # Command line tools
+    ./gpg.nix
+    ./ssh.nix
+
+    # Configurations exclusive to darwin
+    ./karabiner.nix
+    ./kitty.nix
+    ./rime.nix
+  ];
 }
