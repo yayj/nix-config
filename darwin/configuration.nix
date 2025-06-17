@@ -3,7 +3,7 @@
 
   documentation.enable = false;
 
-  fonts.packages = with pkgs; [ fira fira-code lxgw-wenkai ];
+  fonts.packages = with pkgs; [ fira fira-code nerd-fonts.fira-code lxgw-wenkai ];
 
   homebrew.enable = true;
   homebrew.onActivation = {

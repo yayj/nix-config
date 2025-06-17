@@ -22,6 +22,7 @@
     };
 
     shellAliases = {
+      e = "emacsclient -a '' -c -n";
       em = "emacsclient -a '' -t";
       ee = "emacsclient -e";
 
