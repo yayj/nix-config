@@ -140,6 +140,11 @@
   :after ivy
   :bind ("C-s" . #'swiper-isearch))
 
+;; Add mode toggle key for terminal mode
+(use-package term)
+(define-key term-raw-map (kbd "M-q") 'term-line-mode)
+(define-key term-mode-map (kbd "M-q") 'term-char-mode)
+
 ;; Which key, included after Emacs 30.
 (use-package which-key
   :init
