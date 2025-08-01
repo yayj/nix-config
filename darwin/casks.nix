@@ -4,6 +4,7 @@ _: {
     "bettertouchtool"
     "cloudflare-warp"
     "contexts"
+    "emacs-app"
     "karabiner-elements"
     "keepingyouawake"
     "kitty"
