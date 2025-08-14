@@ -8,4 +8,3 @@ export PAGER="bat"
 
 ZSH="${HOME}/.omz"
 ZSH_CACHE_DIR="${HOME}/.cache/oh-my-zsh"
-ZSH_THEME="matt"

@@ -75,6 +75,8 @@ bindkey -e
 setup_ohmyzsh
 setup_theme
 
+ZSH_THEME="matt"
+
 plugins=(brew fzf git kitty rsync)
 source "${ZSH}/oh-my-zsh.sh"
 
