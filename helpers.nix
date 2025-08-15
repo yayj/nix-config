@@ -1,24 +1,43 @@
-{ inputs, outputs, stateVersion }: {
-  mkHome = { hostname, system, username ? "matt", isServer ? true }:
-    with inputs;
-    let isDarwin = builtins.match ".*-darwin" system == [ ];
-    in home-manager.lib.homeManagerConfiguration {
-      pkgs = nixpkgs.legacyPackages.${system};
-
-      modules = [ ./home ];
-
-      extraSpecialArgs = {
-        inherit inputs outputs username stateVersion isDarwin isServer;
-        homeDirectory =
-          if isDarwin then "/Users/${username}" else "/home/${username}";
-      };
-    };
-
-  mkDarwin = {hostname, system, username ? "matt"}:
-    with inputs;
+inputs:
+with inputs;
+let
+  defaultUser = "matt";
+in {
+  buildEnv = hostname: { system, type, ... }: let
+    pkgs = nixpkgs.legacyPackages.${system};
+  in pkgs.buildEnv {
+    name = "${hostname}-env";
+    paths = with pkgs; [
+      bat
+      btop
+      diff-so-fancy
+      fastfetch
+      fd
+      fzf
+      just
+      p7zip
+      rsync
+      stow
+      tree
+      tshark
+    ] ++ lib.optionals (type == "darwin") [
+      gnupg
+      pinentry_mac
+    ] ++ lib.optionals (type != "darwin") [
+      emacs-nox
+      file
+      gcc
+      git
+      netcat-openbsd
+      nettools
+      tmux
+      zsh
+    ];
+  };
+  mkDarwin = hostname: { system, type, username ? defaultUser }:
     nix-darwin.lib.darwinSystem {
       specialArgs = {
-        inherit inputs outputs username hostname system;
+        inherit username hostname system;
       };
       modules = [ ./darwin ];
     };

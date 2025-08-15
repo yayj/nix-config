@@ -10,41 +10,45 @@
     };
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
-
-    home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, ... }@inputs:
+    with inputs;
     let
-      inherit (self) outputs;
-      helpers = import ./helpers.nix {
-        inherit inputs outputs;
-        stateVersion = "25.05";
+      lib = nixpkgs.lib;
+      helpers = import ./helpers.nix inputs;
+
+      hosts = {
+        cc = {
+          system = "x86_64-linux";
+          type = "linux";
+        };
+        Freedom = {
+          system = "x86_64-darwin";
+          type = "darwin";
+        };
+        Liberty = {
+          system = "aarch64-darwin";
+          type = "darwin";
+        };
+        nix-lab = {
+          system = "x86_64-linux";
+          type = "nixos";
+        };
+        ros = {
+          system = "aarch64-linux";
+          type = "linux";
+        };
       };
     in {
-      homeConfigurations = {
-        Freedom = helpers.mkHome {
-          hostname = "Freedom";
-          system = "x86_64-darwin";
-          isServer = false;
-        };
-        cc = helpers.mkHome {
-          hostname = "cc";
-          system = "x86_64-linux";
-        };
-        ros = helpers.mkHome {
-          hostname = "ros";
-          system = "aarch64-linux";
-         };
-      };
-      darwinConfigurations = {
-        Freedom = helpers.mkDarwin {
-          hostname = "Freedom";
-          system = "x86_64-darwin";
-        };
-      };
+      darwinConfigurations = lib.mapAttrs
+        (name: host: helpers.mkDarwin name host)
+        (lib.filterAttrs (_: host: host.type == "darwin") hosts);
+      packages = lib.foldl' lib.recursiveUpdate {}
+        (lib.mapAttrsToList
+          (name: host: lib.setAttrByPath
+            [host.system name]
+            (helpers.buildEnv name host))
+          hosts);
     };
 }
