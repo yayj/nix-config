@@ -10,6 +10,11 @@
     };
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
+
+    disko = {
+      url = "github:nix-community/disko/v1.12.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, ... }@inputs:
@@ -44,6 +49,9 @@
       darwinConfigurations = lib.mapAttrs
         (name: host: helpers.mkDarwin name host)
         (lib.filterAttrs (_: host: host.type == "darwin") hosts);
+      nixosConfigurations = lib.mapAttrs
+        (name: host: helpers.mkNixos name host)
+        (lib.filterAttrs (_: host: host.type == "nixos") hosts);
       packages = lib.foldl' lib.recursiveUpdate {}
         (lib.mapAttrsToList
           (name: host: lib.setAttrByPath

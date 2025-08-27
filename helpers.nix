@@ -41,4 +41,12 @@ in {
       };
       modules = [ ./darwin ];
     };
+
+  mkNixos = hostname: { system, type, username ? defaultUser }:
+    nixpkgs.lib.nixosSystem {
+      specialArgs = {
+        inherit username hostname system disko;
+      };
+      modules = [ ./nixos ];
+    };
 }
