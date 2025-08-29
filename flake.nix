@@ -17,9 +17,8 @@
     };
   };
 
-  outputs = { self, ... }@inputs:
-    with inputs;
-    let
+  outputs = {self, ...} @ inputs:
+    with inputs; let
       lib = nixpkgs.lib;
       helpers = import ./helpers.nix inputs;
 
@@ -46,15 +45,21 @@
         };
       };
     in {
-      darwinConfigurations = lib.mapAttrs
+      darwinConfigurations =
+        lib.mapAttrs
         (name: host: helpers.mkDarwin name host)
-        (lib.filterAttrs (_: host: host.type == "darwin") hosts);
-      nixosConfigurations = lib.mapAttrs
+        (lib.filterAttrs
+          (_: host: host.type == "darwin")
+          hosts);
+      nixosConfigurations =
+        lib.mapAttrs
         (name: host: helpers.mkNixos name host)
         (lib.filterAttrs (_: host: host.type == "nixos") hosts);
-      packages = lib.foldl' lib.recursiveUpdate {}
+      packages =
+        lib.foldl' lib.recursiveUpdate {}
         (lib.mapAttrsToList
-          (name: host: lib.setAttrByPath
+          (name: host:
+            lib.setAttrByPath
             [host.system name]
             (helpers.buildEnv name host))
           hosts);

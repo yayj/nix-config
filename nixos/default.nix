@@ -1,4 +1,8 @@
-{ disko, hostname, ... }: {
+{
+  disko,
+  hostname,
+  ...
+}: {
   imports = [
     disko.nixosModules.disko
     ./common.nix

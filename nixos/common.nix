@@ -1,11 +1,17 @@
-{ lib, pkgs, system, username, ... }: {
+{
+  lib,
+  pkgs,
+  system,
+  username,
+  ...
+}: {
   boot = {
     loader = {
       systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
     initrd = {
-      availableKernelModules = [ "sd_mod" "sr_mod" ];
+      availableKernelModules = ["sd_mod" "sr_mod"];
       kernelModules = [];
     };
   };
@@ -19,7 +25,7 @@
   };
 
   environment = {
-    systemPackages = with pkgs; [ git rsync ];
+    systemPackages = with pkgs; [git rsync];
   };
 
   i18n = {
@@ -27,7 +33,7 @@
     defaultLocale = "en_US.UTF-8";
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   nixpkgs.hostPlatform = lib.mkDefault system;
 
@@ -44,7 +50,7 @@
     enable = true;
     isNormalUser = true;
     group = "users";
-    extraGroups = [ "docker" "wheel" ];
+    extraGroups = ["docker" "wheel"];
     initialHashedPassword = "$y$j9T$jygbX4w8Vmo.nmelR3EM6.$p.5DC20gdHsqLfEKKS/s6r7gmzg01ikB2NqJvslwgO1";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF0N2eKRGPJre2v+t59NzR2nVvVcTK/W9izQgZRSQ+XJ openpgp:0xB8C46362"

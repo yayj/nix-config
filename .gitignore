@@ -6,3 +6,9 @@ result
 .*.swp
 
 .DS_Store
+
+# Style configurations
+alejandra.toml
+
+.prettierrc
+.prettierrc.*

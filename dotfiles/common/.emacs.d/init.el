@@ -82,10 +82,10 @@
 (use-package counsel
   :after ivy
   :bind (("M-x" . #'counsel-M-x)
-	 ("C-x C-f" . #'counsel-find-file)
-	 ("C-c j" . #'counsel-git-grep)
-	 (:map minibuffer-local-map
-	       ("C-r" . #'counsel-minibuffer-history))))
+	       ("C-x C-f" . #'counsel-find-file)
+	       ("C-c j" . #'counsel-git-grep)
+	       (:map minibuffer-local-map
+	             ("C-r" . #'counsel-minibuffer-history))))
 
 ;; Doom modeline (https://seagle0128.github.io/doom-modeline/)
 (use-package doom-modeline
@@ -99,6 +99,18 @@
    doom-modeline-unicode-fallback nil)
   :config
   (doom-modeline-mode 1))
+
+(use-package format-all
+  :commands format-all-mode
+  :hook ((c-ts-mode c++-ts-mode json-ts-mode nix-mode yaml-ts-mode) . format-all-mode)
+  :config
+  (setq format-all-formatters
+        '(("C" clang-format)
+          ("C++" clang-format)
+          ("CMake" cmake-format)
+          ("JSON" prettier)
+          ("Nix" alejandra)
+          ("YAML" prettier))))
 
 ;; General (https://github.com/noctuid/general.el)
 ;; (use-package general)

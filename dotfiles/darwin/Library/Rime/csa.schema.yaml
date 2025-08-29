@@ -9,7 +9,7 @@ schema:
 switches:
   - name: ascii_mode
     reset: 0
-    states: [ CSA, EN ]
+    states: [CSA, EN]
 
 engine:
   processors:
@@ -32,7 +32,7 @@ engine:
     - table_translator
 
 speller:
-  alphabet: '`[{aeiouyAEIOUY'
+  alphabet: "`[{aeiouyAEIOUY"
   auto_select: true
 
 translator:
@@ -45,17 +45,17 @@ translator:
 
 punctuator:
   half_shape:
-    "\"": È
-    "'" : è
-    "/" : é
-    "<" : "'"
-    ">" : "\""
-    "?" : É
+    '"': È
+    "'": è
+    "/": é
+    "<": "'"
+    ">": '"'
+    "?": É
     "\\": à
-    "]" : ç
-    "^" : "?"
-    "|" : À
-    "}" : Ç
-    "~" : Ù
-    "[" : ^
-    "{" : ¨
+    "]": ç
+    "^": "?"
+    "|": À
+    "}": Ç
+    "~": Ù
+    "[": ^
+    "{": ¨
