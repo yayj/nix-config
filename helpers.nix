@@ -4,7 +4,7 @@ with inputs; let
 in {
   buildEnv = hostname: {
     system,
-    type,
+    modules,
     ...
   }: let
     pkgs = nixpkgs.legacyPackages.${system};
@@ -13,24 +13,32 @@ in {
       name = "${hostname}-env";
       paths = with pkgs;
         [
+          alejandra
           bat
           btop
+          clang-tools
           diff-so-fancy
           fastfetch
           fd
           fzf
           just
+          nodePackages.prettier
           p7zip
           rsync
           stow
           tree
           tshark
         ]
-        ++ lib.optionals (type == "darwin") [
+        ++ lib.optionals (builtins.elem "cmake" modules) [
+          cmake
+          cmake-format
+          ninja
+        ]
+        ++ lib.optionals (builtins.elem "gpg" modules) [
           gnupg
           pinentry_mac
         ]
-        ++ lib.optionals (type != "darwin") [
+        ++ lib.optionals (builtins.elem "server" modules) [
           emacs-nox
           file
           gcc
@@ -39,23 +47,23 @@ in {
           nettools
           tmux
           zsh
-        ];
+        ]
+        ++ lib.optionals (builtins.elem "tor" modules) [tor];
     };
   mkDarwin = hostname: {
+    modules,
     system,
-    type,
     username ? defaultUser,
   }:
     nix-darwin.lib.darwinSystem {
       specialArgs = {
-        inherit username hostname system;
+        inherit inputs username hostname modules system;
       };
       modules = [./darwin];
     };
 
   mkNixos = hostname: {
     system,
-    type,
     username ? defaultUser,
   }:
     nixpkgs.lib.nixosSystem {
@@ -64,4 +72,7 @@ in {
       };
       modules = [./nixos];
     };
+
+  isDarwin = {system, ...}: builtins.elem system ["aarch64-darwin" "x86_64-darwin"];
+  isNixos = {modules, ...}: builtins.elem "nixos" host.modules;
 }

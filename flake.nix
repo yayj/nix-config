@@ -25,43 +25,38 @@
       hosts = {
         cc = {
           system = "x86_64-linux";
-          type = "linux";
+          modules = ["server"];
         };
         Freedom = {
           system = "x86_64-darwin";
-          type = "darwin";
+          modules = ["browser" "cmake" "gpg"];
         };
         Liberty = {
           system = "aarch64-darwin";
-          type = "darwin";
+          modules = ["browsers" "cmake" "gpg" "im" "office" "tor" "utilities"];
         };
         nix-lab = {
           system = "x86_64-linux";
-          type = "nixos";
+          modules = ["dev" "nixos" "server"];
         };
         ros = {
           system = "aarch64-linux";
-          type = "linux";
+          modules = ["server"];
         };
       };
     in {
       darwinConfigurations =
         lib.mapAttrs
         (name: host: helpers.mkDarwin name host)
-        (lib.filterAttrs
-          (_: host: host.type == "darwin")
-          hosts);
+        (lib.filterAttrs (_: host: helpers.isDarwin host) hosts);
       nixosConfigurations =
         lib.mapAttrs
         (name: host: helpers.mkNixos name host)
-        (lib.filterAttrs (_: host: host.type == "nixos") hosts);
+        (lib.filterAttrs (_: host: helpers.isNixos host) hosts);
       packages =
         lib.foldl' lib.recursiveUpdate {}
-        (lib.mapAttrsToList
-          (name: host:
-            lib.setAttrByPath
-            [host.system name]
-            (helpers.buildEnv name host))
-          hosts);
+        (lib.mapAttrsToList (name: host:
+          lib.setAttrByPath [host.system name] (helpers.buildEnv name host))
+        hosts);
     };
 }
