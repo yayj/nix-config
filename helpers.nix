@@ -18,6 +18,7 @@ in {
           btop
           clang-tools
           diff-so-fancy
+          emacs
           fastfetch
           fd
           fzf
@@ -39,7 +40,6 @@ in {
           pinentry_mac
         ]
         ++ lib.optionals (builtins.elem "server" modules) [
-          emacs-nox
           file
           gcc
           git
