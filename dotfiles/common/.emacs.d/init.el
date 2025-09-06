@@ -143,7 +143,12 @@
 (use-package nix-mode)
 
 ;; Projectile (https://github.com/bbatsov/projectile)
-;; (use-package projectile)
+(use-package projectile
+  :bind (:map projectile-mode-map
+              ("s-p" . projectile-command-map)
+              ("C-c p" . projectile-command-map))
+  :init
+  (projectile-mode +1))
 
 ;; Solarized themes (https://github.com/bbatsov/solarized-emacs)
 (use-package solarized-theme
@@ -166,8 +171,7 @@
   (treesit-auto-install 't)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode)
-  (treesit-auto-install-all))
+  (global-treesit-auto-mode))
 
 ;; Which key, included after Emacs 30.
 (use-package which-key
