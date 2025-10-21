@@ -65,6 +65,7 @@ in {
   mkNixos = hostname: {
     system,
     username ? defaultUser,
+    ...
   }:
     nixpkgs.lib.nixosSystem {
       specialArgs = {
@@ -74,5 +75,5 @@ in {
     };
 
   isDarwin = {system, ...}: builtins.elem system ["aarch64-darwin" "x86_64-darwin"];
-  isNixos = {modules, ...}: builtins.elem "nixos" host.modules;
+  isNixos = {modules, ...}: builtins.elem "nixos" modules;
 }
