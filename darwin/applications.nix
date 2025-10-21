@@ -7,6 +7,7 @@
     casks =
       [
         "bettertouchtool"
+        "calibre"
         "cloudflare-warp"
         "contexts"
         "karabiner-elements"
