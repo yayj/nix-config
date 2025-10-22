@@ -14,6 +14,7 @@
       availableKernelModules = ["sd_mod" "sr_mod"];
       kernelModules = [];
     };
+    tmp.cleanOnBoot = true;
   };
 
   documentation = {

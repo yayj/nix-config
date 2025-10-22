@@ -102,12 +102,10 @@
 
 (use-package format-all
   :commands format-all-mode
-  :hook ((c-ts-mode c++-ts-mode json-ts-mode nix-mode yaml-ts-mode) . format-all-mode)
+  :hook ((json-ts-mode nix-mode yaml-ts-mode) . format-all-mode)
   :config
   (setq format-all-formatters
-        '(("C" clang-format)
-          ("C++" clang-format)
-          ("CMake" cmake-format)
+        '(("CMake" cmake-format)
           ("JSON" prettier)
           ("Nix" alejandra)
           ("YAML" prettier))))
@@ -179,3 +177,33 @@
   (setq which-key-idle-delay 1)
   :config
   (which-key-mode))
+
+(use-package lsp-mode
+  :hook ((c-ts-mode . lsp)
+         (c-ts-mode . (lambda () (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
+         (c++-ts-mode . lsp)
+         (c++-ts-mode . (lambda () (add-hook 'before-save-hook #'lsp-format-buffer nil t))))
+  :commands lsp
+  :bind (("C-c f" . lsp-format-buffer))
+  :config
+  (setopt lsp-completion-provider :capf
+          lsp-enable-on-type-formatting nil
+          lsp-enable-indentation nil
+          lsp-idle-delay 0.5))
+
+(use-package company
+  :ensure t
+  :hook ((c-ts-mode . company-mode)
+         (c++-ts-mode . company-mode))
+  :bind ("M-/" . #'company-complete)
+  :config
+  (setopt company-idle-delay 0.1
+          company-minimum-prefix-length 1
+          company-backends '(company-capf)))
+
+(use-package lsp-ui
+  :ensure t
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (setopt lsp-ui-sideline-enable t
+          lsp-ui-doc-enable t))

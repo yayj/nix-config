@@ -52,7 +52,11 @@ zstyle ':vcs_info:git:*' actionformats '%F{blue}(%f%F{red}%b|%a%f%F{blue})%f '
 zstyle ':vcs_info:git-svn:*' formats '%F{blue}(%f%F{red}%b%f%m%F{blue})%f '
 zstyle ':vcs_info:git-svn:*' actionformats '%F{blue}(%f%F{red}%b|%a%f%F{blue})%f '
 
-PROMPT='%(?.%F{blue}λ.%F{red}ε)%f '
+if [[ -n "\${name}" ]]; then
+  PROMPT='%(?.%F{blue}.%F{red})\${name}%f '
+else
+  PROMPT='%(?.%F{blue}λ.%F{red}ε)%f '
+fi
 PROMPT+='%F{cyan}%c%f '
 PROMPT+='\${vcs_info_msg_0_}'
 PROMPT+='%F{yellow}»%f '
