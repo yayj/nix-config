@@ -29,7 +29,7 @@
         };
         Freedom = {
           system = "x86_64-darwin";
-          modules = ["browser" "cmake" "gpg"];
+          modules = ["browsers" "cmake" "gpg"];
         };
         Liberty = {
           system = "aarch64-darwin";
