@@ -169,7 +169,12 @@
   (treesit-auto-install 't)
   :config
   (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
+  (global-treesit-auto-mode)
+  :hook
+  ;; Disable the indentations generated due to namespace
+  (c++-ts-mode . (lambda ()
+                   (push '((n-p-gp nil nil "namespace_definition") parent-bol 0)
+                         (alist-get 'cpp treesit-simple-indent-rules)))))
 
 ;; Which key, included after Emacs 30.
 (use-package which-key
