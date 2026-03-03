@@ -101,7 +101,7 @@ unsetopt HIST_EXPIRE_DUPS_FIRST
 setopt SHARE_HISTORY
 unsetopt EXTENDED_HISTORY
 
-
+alias -- brew='/run/current-system/sw/bin/brew'
 alias -- b='brew'
 alias -- e='emacsclient -a "" -c -n'
 alias -- ee='emacsclient -e'

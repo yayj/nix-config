@@ -30,6 +30,7 @@
         "adobe-acrobat-reader"
         "appcleaner"
         "iina"
+        "microsoft-teams"
         "thunderbird"
         "wireshark-app"
         "zoom"
