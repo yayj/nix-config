@@ -1,19 +1,23 @@
 ;; Global Settings
 
 (setopt inhibit-startup-screen t
+        make-backup-files nil
         cursor-type 'hbar)
 
 ;; Set tab size to 2 for all mode
 (setopt indent-tabs-mode nil
-        make-backup-files nil
         tab-width 2
         standard-indent 2
+        treesit-simple-indent-offset 2
         c-basic-offset 2
-        python-indent-offset 2
+        c-ts-mode-indent-offset 2
         js-indent-level 2
+        lua-ts-indent-offset 2
         perl-indent-level 2
+        python-ts-indent-offset 2
         sh-basic-offset 2
-        tcl-indent-level 2)
+        tcl-indent-level 2
+        typescript-indent-level 2)
 
 ;; UI adjustment
 (defun apply-ui-settings (frame)
@@ -179,6 +183,17 @@
   (c++-ts-mode . (lambda ()
                    (push '((n-p-gp nil nil "namespace_definition") parent-bol 0)
                          (alist-get 'cpp treesit-simple-indent-rules)))))
+
+;; Code folding using treesit.el
+(use-package treesit-fold
+  :hook (prog-mode . (lambda ()
+                       (treesit-fold-mode)
+                       (treesit-fold-indicators-mode)
+                       (treesit-fold-line-comment-mode)))
+  :bind (:map treesit-fold-mode-map
+              ("C-c TAB" . treesit-fold-toggle)
+              ("C-c [" . treesit-fold-open-all)
+              ("C-c ]" . treesit-fold-close-all)))
 
 ;; Which key, included after Emacs 30.
 (use-package which-key
