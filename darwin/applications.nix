@@ -46,6 +46,9 @@
         "Whatsapp" = 310633997;
       }
       // lib.optionalAttrs (builtins.elem "office" modules) {
+        "Keynote" = 361285480;
+        "Pages" = 361309726;
+        "Numbers" = 361304891;
         "Microsoft PowerPoint" = 462062816;
         "Microsoft Word" = 462054704;
         "Microsoft Excel" = 462058435;

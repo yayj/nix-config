@@ -15,6 +15,7 @@
 
 😮‍💨	exhaling
 
+😴	sleeping
 🥱	yawning
 😓	downcast
 😤	steamfromnose
@@ -29,6 +30,7 @@
 👍🏼	thumb
 👎🏼	thumbdown
 🫱🏻‍🫲🏼	handshake
+👏🏼	clapping
 🙏🏼	thanks
 
 🤦🏼‍♂️	facepalming
