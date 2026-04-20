@@ -60,3 +60,5 @@ patch:
       ascii_mode: true
     org.gpgtools.pinentry-mac:
       ascii_mode: true
+    com.brave.Browser:
+      ascii_mode: true

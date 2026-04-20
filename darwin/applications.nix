@@ -19,8 +19,7 @@
         "squirrel-app"
       ]
       ++ lib.optionals (builtins.elem "browsers" modules) [
-        "arc"
-        "tor-browser"
+        "brave-browser"
       ]
       ++ lib.optionals (builtins.elem "im" modules) [
         "signal"
@@ -37,7 +36,6 @@
       ];
     masApps =
       {
-        "Bitwarden" = 1352778147;
         "Hidden Bar" = 1452453066;
         "Windows App" = 1295203466;
       }

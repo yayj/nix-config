@@ -15,8 +15,8 @@
   homebrew.enable = true;
   homebrew.onActivation = {
     cleanup = "zap";
-    autoUpdate = true;
-    upgrade = true;
+    autoUpdate = false;
+    upgrade = false;
   };
 
   networking = {
