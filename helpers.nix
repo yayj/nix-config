@@ -35,10 +35,6 @@ in {
           cmake-format
           ninja
         ]
-        ++ lib.optionals (builtins.elem "gpg" modules) [
-          gnupg
-          pinentry_mac
-        ]
         ++ lib.optionals (builtins.elem "server" modules) [
           file
           gcc
@@ -47,8 +43,7 @@ in {
           nettools
           tmux
           zsh
-        ]
-        ++ lib.optionals (builtins.elem "tor" modules) [tor];
+        ];
     };
   mkDarwin = hostname: {
     modules,

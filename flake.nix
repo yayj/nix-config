@@ -29,11 +29,11 @@
         };
         Freedom = {
           system = "x86_64-darwin";
-          modules = ["browsers" "cmake" "gpg"];
+          modules = ["browsers" "cmake"];
         };
         Liberty = {
           system = "aarch64-darwin";
-          modules = ["browsers" "cmake" "gpg" "im" "office" "tor" "utilities"];
+          modules = ["browsers" "cmake" "im" "office" "utilities"];
         };
         nix-lab = {
           system = "x86_64-linux";
