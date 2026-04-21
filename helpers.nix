@@ -43,7 +43,8 @@ in {
           nettools
           tmux
           zsh
-        ];
+        ]
+        ++ lib.optionals isDarwin [mas];
     };
   mkDarwin = hostname: {
     modules,

@@ -103,9 +103,9 @@ unsetopt EXTENDED_HISTORY
 
 alias -- brew='/run/current-system/sw/bin/brew'
 alias -- b='brew'
-alias -- e='emacsclient -a "" -c -n'
-alias -- ee='emacsclient -e'
-alias -- em='emacsclient -a "" -t'
+alias -- e='emacsclient -s ${EMACS_SOCK} -a "" -c -n'
+alias -- ee='emacsclient -s ${EMACS_SOCK} -e'
+alias -- em='emacsclient -s ${EMACS_SOCK} -a "" -t'
 alias -- gl='git gl'
 alias -- gla='git gla'
 alias -- glav='git glav'
