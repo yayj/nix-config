@@ -47,3 +47,8 @@
 💋	kiss
 💯	hundred
 💤	zzz
+
+⌘	cmd
+⌥	opt
+⇧	shift
+⌃	ctrl
