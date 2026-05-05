@@ -86,6 +86,17 @@
   :config
   (global-command-log-mode t))
 
+;; company-mode (https://company-mode.github.io/)
+(use-package company
+  :ensure t
+  :hook ((c-ts-mode c++-ts-mode) . company-mode)
+  :bind ("M-/" . #'company-complete)
+  :config
+  (setopt company-idle-delay 0.5
+          company-minimum-prefix-length 1
+          ;; Eglot uses the standard 'completion-at-point-functions'
+          company-backends '(company-capf)))
+
 ;; Counsel (https://github.com/abo-abo/swiper)
 (use-package counsel
   :after ivy
@@ -108,15 +119,33 @@
   :config
   (doom-modeline-mode 1))
 
+;; Emacs Polyglot (https://github.com/joaotavora/eglot)
+(use-package eglot
+  :hook ((c-ts-mode . eglot-ensure)
+         (c++-ts-mode . eglot-ensure)
+         ;; Format on save using the standard eglot function
+         ((c-ts-mode c++-ts-mode) . (lambda ()
+                                      (add-hook 'before-save-hook #'eglot-format-buffer nil t))))
+  :bind (:map eglot-mode-map
+              ("C-c f" . eglot-format-buffer))
+  :config
+  (setopt eglot-send-changes-idle-time 0.5)
+
+  ;; Customize clangd arguments (like adding -j=4)
+  ;; (add-to-list 'eglot-server-programs
+  ;;              '((c-ts-mode c++-ts-mode) . ("clangd" "--header-insertion=never")))
+  )
+
+;; Format-all (https://github.com/lassik/emacs-format-all-the-code)
 (use-package format-all
   :commands format-all-mode
   :hook ((json-ts-mode nix-mode yaml-ts-mode) . format-all-mode)
   :config
-  (setq format-all-formatters
-        '(("CMake" cmake-format)
-          ("JSON" prettier)
-          ("Nix" alejandra)
-          ("YAML" prettier))))
+  (setopt format-all-formatters
+          '(("CMake" cmake-format)
+            ("JSON" prettier)
+            ("Nix" alejandra)
+            ("YAML" prettier))))
 
 ;; General (https://github.com/noctuid/general.el)
 ;; (use-package general)
@@ -154,7 +183,14 @@
               ("s-p" . projectile-command-map)
               ("C-c p" . projectile-command-map))
   :init
-  (projectile-mode +1))
+  (projectile-mode +1)
+  :config
+  ;; This tells Emacs built-in project logic which Eglot uses
+  ;; to look at Projectile's project list.
+  (defun my/project-root-projectile (dir)
+    (let ((root (projectile-project-root dir)))
+      (when root (cons 'transient root))))
+  (add-hook 'project-find-functions #'my/project-root-projectile))
 
 ;; Solarized themes (https://github.com/bbatsov/solarized-emacs)
 (use-package solarized-theme
@@ -201,33 +237,3 @@
   (setq which-key-idle-delay 1)
   :config
   (which-key-mode))
-
-(use-package lsp-mode
-  :hook ((c-ts-mode . lsp)
-         (c-ts-mode . (lambda () (add-hook 'before-save-hook #'lsp-format-buffer nil t)))
-         (c++-ts-mode . lsp)
-         (c++-ts-mode . (lambda () (add-hook 'before-save-hook #'lsp-format-buffer nil t))))
-  :commands lsp
-  :bind (("C-c f" . lsp-format-buffer))
-  :config
-  (setopt lsp-completion-provider :capf
-          lsp-enable-on-type-formatting nil
-          lsp-enable-indentation nil
-          lsp-idle-delay 0.5))
-
-(use-package company
-  :ensure t
-  :hook ((c-ts-mode . company-mode)
-         (c++-ts-mode . company-mode))
-  :bind ("M-/" . #'company-complete)
-  :config
-  (setopt company-idle-delay 0.1
-          company-minimum-prefix-length 1
-          company-backends '(company-capf)))
-
-(use-package lsp-ui
-  :ensure t
-  :hook (lsp-mode . lsp-ui-mode)
-  :config
-  (setopt lsp-ui-sideline-enable t
-          lsp-ui-doc-enable t))
