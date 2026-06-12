@@ -8,36 +8,56 @@ in {
     ...
   }: let
     pkgs = nixpkgs.legacyPackages.${system};
+    dSys = ["aarch64-darwin" "x86_64-darwin"];
+    isDarwin = builtins.elem system dSys;
   in
     pkgs.buildEnv {
       name = "${hostname}-env";
       paths = with pkgs;
         [
-          alejandra
           bat
           btop
-          clang-tools
           diff-so-fancy
-          emacs
           fastfetch
           fd
           fzf
           just
-          nodePackages.prettier
           p7zip
           rsync
           stow
           tree
           tshark
         ]
-        ++ lib.optionals (builtins.elem "cmake" modules) [
-          cmake
-          cmake-format
-          ninja
-        ]
+        ++ lib.optionals (builtins.elem "dev" modules) (
+          [
+            cmake
+            ninja
+          ]
+          ++ lib.optionals (!isDarwin) [
+            gcc
+            gnumake
+            patchelf
+          ]
+        )
+        ++ lib.optionals (builtins.elem "emacs" modules) (
+          [
+            alejandra
+            cmake-format
+            emacs
+            nodePackages.prettier
+          ]
+          ++ lib.optionals (!isDarwin) [clang-tools]
+        )
+        ++ lib.optionals (builtins.elem "gnupg" modules) (
+          [gnupg]
+          ++ (
+            if isDarwin
+            then [pinentry_mac]
+            else [pinentry-tty]
+          )
+        )
         ++ lib.optionals (builtins.elem "server" modules) [
           file
-          gcc
           git
           netcat-openbsd
           nettools
@@ -70,6 +90,6 @@ in {
       modules = [./nixos];
     };
 
-  isDarwin = {system, ...}: builtins.elem system ["aarch64-darwin" "x86_64-darwin"];
+  isDarwin = {system, ...}: builtins.elem system dSys;
   isNixos = {modules, ...}: builtins.elem "nixos" modules;
 }

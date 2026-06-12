@@ -25,23 +25,23 @@
       hosts = {
         cc = {
           system = "x86_64-linux";
-          modules = ["server"];
+          modules = ["emacs" "server"];
         };
         Freedom = {
           system = "x86_64-darwin";
-          modules = ["browsers" "cmake"];
+          modules = ["browsers" "dev" "gnupg" "emacs"];
         };
         Liberty = {
           system = "aarch64-darwin";
-          modules = ["browsers" "cmake" "im" "office" "utilities"];
+          modules = ["browsers" "dev" "emacs" "gnupg" "im" "office" "utilities"];
         };
         nix-lab = {
           system = "x86_64-linux";
-          modules = ["dev" "nixos" "server"];
+          modules = ["dev" "emacs" "nixos" "server"];
         };
         ros = {
           system = "aarch64-linux";
-          modules = ["server"];
+          modules = ["emacs" "server"];
         };
       };
     in {
