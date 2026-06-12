@@ -44,7 +44,7 @@ in {
             alejandra
             cmake-format
             emacs
-            nodePackages.prettier
+            prettier
           ]
           ++ lib.optionals (!isDarwin) [clang-tools]
         )
