@@ -48,14 +48,6 @@ in {
           ]
           ++ lib.optionals (!isDarwin) [clang-tools]
         )
-        ++ lib.optionals (builtins.elem "gnupg" modules) (
-          [gnupg]
-          ++ (
-            if isDarwin
-            then [pinentry_mac]
-            else [pinentry-tty]
-          )
-        )
         ++ lib.optionals (builtins.elem "server" modules) [
           file
           git

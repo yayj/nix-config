@@ -29,11 +29,11 @@
         };
         Freedom = {
           system = "x86_64-darwin";
-          modules = ["browsers" "dev" "gnupg" "emacs"];
+          modules = ["browsers" "dev" "emacs"];
         };
         Liberty = {
           system = "aarch64-darwin";
-          modules = ["browsers" "dev" "emacs" "gnupg" "im" "office" "utilities"];
+          modules = ["browsers" "dev" "emacs" "im" "office" "utilities"];
         };
         nix-lab = {
           system = "x86_64-linux";
