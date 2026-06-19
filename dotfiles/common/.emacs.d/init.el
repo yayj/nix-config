@@ -208,11 +208,6 @@
               :after ivy
               :bind ("C-s" . #'swiper-isearch))
 
-;; Add mode toggle key for terminal mode
-(use-package! term)
-(define-key term-raw-map (kbd "M-q") 'term-line-mode)
-(define-key term-mode-map (kbd "M-q") 'term-char-mode)
-
 ;; Automatically install and use tree-sitter major modes in Emacs 29+. (https://github.com/renzmann/treesit-auto)
 (use-package! treesit-auto
               :custom
@@ -236,6 +231,13 @@
                           ("C-c TAB" . treesit-fold-toggle)
                           ("C-c [" . treesit-fold-open-all)
                           ("C-c ]" . treesit-fold-close-all)))
+
+;; Emacs libvterm integration (https://github.com/akermu/emacs-libvterm)
+(use-package! vterm
+              :if (not (eq system-type 'windows-nt))
+              :config
+              (define-key vterm-mode-map (kbd "M-q") #'vterm-copy-mode)
+              (define-key vterm-copy-mode-map (kbd "M-q") #'vterm-copy-mode))
 
 ;; Which key, included after Emacs 30.
 (use-package! which-key
