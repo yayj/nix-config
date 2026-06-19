@@ -67,6 +67,9 @@ EOF
   }
 }
 
+# Stop setting preferences if it's a TRAMP shell
+[[ $TERM == "dumb" ]] && return
+
 typeset -U path cdpath fpath manpath
 
 for profile in ${(z)NIX_PROFILES}; do
