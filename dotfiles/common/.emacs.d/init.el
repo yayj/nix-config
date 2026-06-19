@@ -177,6 +177,9 @@
 ;; Magit (https://magit.vc/)
 (use-package! magit)
 
+;; Markdown Mode for Emacs (https://jblevins.org/projects/markdown-mode/)
+(use-package! markdown-mode)
+
 ;; A library for Nerd Font icons (https://github.com/rainstormstudio/nerd-icons.el)
 (use-package! nerd-icons)
 
