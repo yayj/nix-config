@@ -124,6 +124,24 @@
               :config
               (doom-modeline-mode 1))
 
+;; Emulate A Terminal (https://codeberg.org/akib/emacs-eat) for Windows only
+;; Apply its fork patched for Windows
+(when (eq system-type 'windows-nt)
+  (use-package! eat
+                :straight (:host codeberg
+                                 :repo "thearcticcat/emacs-eat"
+                                 :branch "windows-hack"
+                                 :files ("*.el" ("term" "term/*.el") "*.texi"
+                                         "*.ti" ("terminfo/e" "terminfo/e/*")
+                                         ("terminfo/65" "terminfo/65/*")
+                                         ("integration" "integration/*")
+                                         (:exclude ".dir-locals.el" "*-tests.el")))
+                :config
+                (setq explicit-shell-file-name
+                      (or (executable-find "pwsh")
+                          (executable-find "powershell")))
+                (setq explicit-pwsh-args '("-NoLogo"))))
+
 ;; Emacs Polyglot (https://github.com/joaotavora/eglot)
 (use-package! eglot
               :hook ((c-ts-mode . eglot-ensure)
@@ -235,12 +253,12 @@
                           ("C-c [" . treesit-fold-open-all)
                           ("C-c ]" . treesit-fold-close-all)))
 
-;; Emacs libvterm integration (https://github.com/akermu/emacs-libvterm)
-(use-package! vterm
-              :if (not (eq system-type 'windows-nt))
-              :config
-              (define-key vterm-mode-map (kbd "M-q") #'vterm-copy-mode)
-              (define-key vterm-copy-mode-map (kbd "M-q") #'vterm-copy-mode))
+;; Emacs libvterm integration (https://github.com/akermu/emacs-libvterm) for non-Windows systems
+(when (not (eq system-type 'windows-nt))
+  (use-package! vterm
+                :config
+                (define-key vterm-mode-map (kbd "M-q") #'vterm-copy-mode)
+                (define-key vterm-copy-mode-map (kbd "M-q") #'vterm-copy-mode)))
 
 ;; Which key, included after Emacs 30.
 (use-package! which-key
