@@ -8,6 +8,32 @@ in {
     ...
   }: let
     pkgs = nixpkgs.legacyPackages.${system};
+    emacsWithPkgs = pkgs.emacs.pkgs.withPackages (epkgs:
+      with epkgs; [
+        ace-window
+        aggressive-indent
+        command-log-mode
+        company
+        counsel
+        doom-modeline
+        eglot
+        format-all
+        ivy
+        ivy-rich
+        just-mode
+        magit
+        markdown-mode
+        nerd-icons
+        nix-mode
+        projectile
+        solarized-theme
+        swiper
+        treesit-auto
+        treesit-fold
+        treesit-grammars.with-all-grammars
+        vterm
+        which-key
+      ]);
     dSys = ["aarch64-darwin" "x86_64-darwin"];
     isDarwin = builtins.elem system dSys;
   in
@@ -43,7 +69,7 @@ in {
           [
             alejandra
             cmake-format
-            emacs
+            emacsWithPkgs
             prettier
           ]
           ++ lib.optionals (!isDarwin) [clang-tools]

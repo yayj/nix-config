@@ -67,173 +67,179 @@
 (straight-use-package 'use-package)
 (setopt straight-use-package-by-default t)
 
+(defmacro use-package! (name &rest args)
+  `(use-package ,name
+     :straight ,(not (or (eq ',name 'emacs)
+                         (locate-library (symbol-name name))))
+     ,@args))
+
 ;; Packages
 
 ;; Ace window (https://github.com/abo-abo/ace-window)
-(use-package ace-window
-  :init
-  (setopt aw-dispatch-always t)
-  :bind
-  ("M-o" . #'ace-window))
+(use-package! ace-window
+              :init
+              (setopt aw-dispatch-always t)
+              :bind
+              ("M-o" . #'ace-window))
 
 ;; Aggressive indent mode (https://github.com/Malabarba/aggressive-indent-mode)
-(use-package aggressive-indent
-  :config
-  (global-aggressive-indent-mode t))
+(use-package! aggressive-indent
+              :config
+              (global-aggressive-indent-mode t))
 
 ;; Command log mode (https://github.com/lewang/command-log-mode)
-(use-package command-log-mode
-  :config
-  (global-command-log-mode t))
+(use-package! command-log-mode
+              :config
+              (global-command-log-mode t))
 
 ;; company-mode (https://company-mode.github.io/)
-(use-package company
-  :ensure t
-  :hook ((c-ts-mode c++-ts-mode) . company-mode)
-  :bind ("M-/" . #'company-complete)
-  :config
-  (setopt company-idle-delay 0.5
-          company-minimum-prefix-length 1
-          ;; Eglot uses the standard 'completion-at-point-functions'
-          company-backends '(company-capf)))
+(use-package! company
+              :hook ((c-ts-mode c++-ts-mode) . company-mode)
+              :bind ("M-/" . #'company-complete)
+              :config
+              (setopt company-idle-delay 0.5
+                      company-minimum-prefix-length 1
+                      ;; Eglot uses the standard 'completion-at-point-functions'
+                      company-backends '(company-capf)))
 
 ;; Counsel (https://github.com/abo-abo/swiper)
-(use-package counsel
-  :after ivy
-  :bind (("M-x" . #'counsel-M-x)
-	       ("C-x C-f" . #'counsel-find-file)
-	       ("C-c j" . #'counsel-git-grep)
-	       (:map minibuffer-local-map
-	             ("C-r" . #'counsel-minibuffer-history))))
+(use-package! counsel
+              :after ivy
+              :bind (("M-x" . #'counsel-M-x)
+	                   ("C-x C-f" . #'counsel-find-file)
+	                   ("C-c j" . #'counsel-git-grep)
+	                   (:map minibuffer-local-map
+	                         ("C-r" . #'counsel-minibuffer-history))))
 
 ;; Doom modeline (https://seagle0128.github.io/doom-modeline/)
-(use-package doom-modeline
-  :after
-  nerd-icons
-  :init
-  (setopt
-   nerd-icons-font-family "FiraCode Nerd Font"
-   doom-modeline-major-mode-icon t
-   doom-modeline-major-mode-color-icon t
-   doom-modeline-unicode-fallback nil)
-  :config
-  (doom-modeline-mode 1))
+(use-package! doom-modeline
+              :after
+              nerd-icons
+              :init
+              (setopt
+               nerd-icons-font-family "FiraCode Nerd Font"
+               doom-modeline-major-mode-icon t
+               doom-modeline-major-mode-color-icon t
+               doom-modeline-unicode-fallback nil)
+              :config
+              (doom-modeline-mode 1))
 
 ;; Emacs Polyglot (https://github.com/joaotavora/eglot)
-(use-package eglot
-  :hook ((c-ts-mode . eglot-ensure)
-         (c++-ts-mode . eglot-ensure)
-         ;; Format on save using the standard eglot function
-         ((c-ts-mode c++-ts-mode) . (lambda ()
-                                      (add-hook 'before-save-hook #'eglot-format-buffer nil t))))
-  :bind (:map eglot-mode-map
-              ("C-c f" . eglot-format-buffer))
-  :config
-  (setopt eglot-send-changes-idle-time 0.5)
+(use-package! eglot
+              :hook ((c-ts-mode . eglot-ensure)
+                     (c++-ts-mode . eglot-ensure)
+                     ;; Format on save using the standard eglot function
+                     ((c-ts-mode c++-ts-mode) . (lambda ()
+                                                  (add-hook 'before-save-hook #'eglot-format-buffer nil t))))
+              :bind (:map eglot-mode-map
+                          ("C-c f" . eglot-format-buffer))
+              :config
+              (setopt eglot-send-changes-idle-time 0.5)
 
-  ;; Customize clangd arguments (like adding -j=4)
-  ;; (add-to-list 'eglot-server-programs
-  ;;              '((c-ts-mode c++-ts-mode) . ("clangd" "--header-insertion=never")))
-  )
+              ;; Customize clangd arguments (like adding -j=4)
+              ;; (add-to-list 'eglot-server-programs
+              ;;              '((c-ts-mode c++-ts-mode) . ("clangd" "--header-insertion=never")))
+              )
 
 ;; Format-all (https://github.com/lassik/emacs-format-all-the-code)
-(use-package format-all
-  :commands format-all-mode
-  :hook ((json-ts-mode nix-mode yaml-ts-mode) . format-all-mode)
-  :config
-  (setopt format-all-formatters
-          '(("CMake" cmake-format)
-            ("JSON" prettier)
-            ("Nix" alejandra)
-            ("YAML" prettier))))
+(use-package! format-all
+              :commands format-all-mode
+              :hook ((json-ts-mode nix-mode yaml-ts-mode) . format-all-mode)
+              :config
+              (setopt format-all-formatters
+                      '(("CMake" cmake-format)
+                        ("JSON" prettier)
+                        ("Nix" alejandra)
+                        ("YAML" prettier))))
 
 ;; General (https://github.com/noctuid/general.el)
 ;; (use-package general)
 
 ;; Ivy (https://github.com/abo-abo/swiper)
-(use-package ivy
-  :init
-  (setopt
-   ivy-use-virtual-buffers t
-   enable-recursive-minibuffers t)
-  :bind
-  ("C-c C-r" . #'ivy-resume)
-  :config
-  (ivy-mode 1))
+(use-package! ivy
+              :init
+              (setopt
+               ivy-use-virtual-buffers t
+               enable-recursive-minibuffers t)
+              :bind
+              ("C-c C-r" . #'ivy-resume)
+              :config
+              (ivy-mode 1))
 
 ;; Ivy rich (https://github.com/Yevgnen/ivy-rich)
-(use-package ivy-rich
-  :after ivy
-  :config (ivy-rich-mode 1))
+(use-package! ivy-rich
+              :after ivy
+              :config (ivy-rich-mode 1))
 
-(use-package just-mode
-  :init (setopt just-indent-offset 2))
+(use-package! just-mode
+              :init (setopt just-indent-offset 2))
 
 ;; Magit (https://magit.vc/)
-(use-package magit)
+(use-package! magit)
 
-(use-package nerd-icons)
+;; A library for Nerd Font icons (https://github.com/rainstormstudio/nerd-icons.el)
+(use-package! nerd-icons)
 
 ;; Nix mode (https://github.com/NixOS/nix-mode)
-(use-package nix-mode)
+(use-package! nix-mode)
 
 ;; Projectile (https://github.com/bbatsov/projectile)
-(use-package projectile
-  :bind (:map projectile-mode-map
-              ("s-p" . projectile-command-map)
-              ("C-c p" . projectile-command-map))
-  :init
-  (projectile-mode +1)
-  :config
-  ;; This tells Emacs built-in project logic which Eglot uses
-  ;; to look at Projectile's project list.
-  (defun my/project-root-projectile (dir)
-    (let ((root (projectile-project-root dir)))
-      (when root (cons 'transient root))))
-  (add-hook 'project-find-functions #'my/project-root-projectile))
+(use-package! projectile
+              :bind (:map projectile-mode-map
+                          ("s-p" . projectile-command-map)
+                          ("C-c p" . projectile-command-map))
+              :init
+              (projectile-mode +1)
+              :config
+              ;; This tells Emacs built-in project logic which Eglot uses
+              ;; to look at Projectile's project list.
+              (defun my/project-root-projectile (dir)
+                (let ((root (projectile-project-root dir)))
+                  (when root (cons 'transient root))))
+              (add-hook 'project-find-functions #'my/project-root-projectile))
 
 ;; Solarized themes (https://github.com/bbatsov/solarized-emacs)
-(use-package solarized-theme
-  :config
-  (load-theme 'solarized-selenized-light t))
+(use-package! solarized-theme
+              :config
+              (load-theme 'solarized-selenized-light t))
 
 ;; Swiper (https://github.com/abo-abo/swiper)
-(use-package swiper
-  :after ivy
-  :bind ("C-s" . #'swiper-isearch))
+(use-package! swiper
+              :after ivy
+              :bind ("C-s" . #'swiper-isearch))
 
 ;; Add mode toggle key for terminal mode
-(use-package term)
+(use-package! term)
 (define-key term-raw-map (kbd "M-q") 'term-line-mode)
 (define-key term-mode-map (kbd "M-q") 'term-char-mode)
 
 ;; Automatically install and use tree-sitter major modes in Emacs 29+. (https://github.com/renzmann/treesit-auto)
-(use-package treesit-auto
-  :custom
-  (treesit-auto-install 't)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode)
-  :hook
-  ;; Disable the indentations generated due to namespace
-  (c++-ts-mode . (lambda ()
-                   (push '((n-p-gp nil nil "namespace_definition") parent-bol 0)
-                         (alist-get 'cpp treesit-simple-indent-rules)))))
+(use-package! treesit-auto
+              :custom
+              (treesit-auto-install 't)
+              :config
+              (treesit-auto-add-to-auto-mode-alist 'all)
+              (global-treesit-auto-mode)
+              :hook
+              ;; Disable the indentations generated due to namespace
+              (c++-ts-mode . (lambda ()
+                               (push '((n-p-gp nil nil "namespace_definition") parent-bol 0)
+                                     (alist-get 'cpp treesit-simple-indent-rules)))))
 
 ;; Code folding using treesit.el
-(use-package treesit-fold
-  :hook (prog-mode . (lambda ()
-                       (treesit-fold-mode)
-                       (treesit-fold-indicators-mode)
-                       (treesit-fold-line-comment-mode)))
-  :bind (:map treesit-fold-mode-map
-              ("C-c TAB" . treesit-fold-toggle)
-              ("C-c [" . treesit-fold-open-all)
-              ("C-c ]" . treesit-fold-close-all)))
+(use-package! treesit-fold
+              :hook (prog-mode . (lambda ()
+                                   (treesit-fold-mode)
+                                   (treesit-fold-indicators-mode)
+                                   (treesit-fold-line-comment-mode)))
+              :bind (:map treesit-fold-mode-map
+                          ("C-c TAB" . treesit-fold-toggle)
+                          ("C-c [" . treesit-fold-open-all)
+                          ("C-c ]" . treesit-fold-close-all)))
 
 ;; Which key, included after Emacs 30.
-(use-package which-key
-  :init
-  (setq which-key-idle-delay 1)
-  :config
-  (which-key-mode))
+(use-package! which-key
+              :init
+              (setq which-key-idle-delay 1)
+              :config
+              (which-key-mode))
