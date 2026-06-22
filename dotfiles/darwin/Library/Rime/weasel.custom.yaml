@@ -1,0 +1,14 @@
+patch:
+  app_options:
+    emacs.exe:
+      ascii_mode: true
+    explorer.exe:
+      ascii_mode: true
+    powershell.exe:
+      ascii_mode: true
+    brave.exe:
+      ascii_mode: true
+    firefox.exe:
+      ascii_mode: true
+    Bitwarden.exe:
+      ascii_mode: true

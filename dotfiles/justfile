@@ -1,5 +1,7 @@
 #!/usr/bin/env -S just --justfile
 
+set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
+
 just := just_executable() + " -f " + justfile()
 
 stow := "stow --override='.*' --no-folding -t ${HOME} -d " + justfile_directory()
@@ -46,3 +48,53 @@ _server:
 [unix]
 remove +pkgs:
   @{{stow}} -D {{pkgs}}
+
+[windows]
+setup:
+  #!powershell.exe
+
+  $h = "$HOME\AppData\Roaming"
+  $e = "$h\.emacs.d"
+  $r = "$h\Rime"
+
+  New-Item -Type Directory -Force -Path "$e", "$r\dicts", "$r\lua"  > $null
+  New-Item -Type SymbolicLink -Path "$e\init.el" -Value ".\common\.emacs.d\init.el" > $null
+
+  $dpy_ver = "01a13287cbd27819be1c34fa1ddc1b3643d5001b"
+  foreach ($name in @("double_pinyin","double_pinyin_flypy")) {
+    $file = "$name.schema.yaml"
+    Remove-Item -Force -ErrorAction SilentlyContinue "$file"
+    Invoke-WebRequest -OutFile "$r\$file" -Uri `
+      "https://raw.githubusercontent.com/rime/rime-double-pinyin/$dpy_ver/$file"
+  }
+
+  $dic_ver="2026.06.03"
+  foreach ($name in @("8105","base","ext","others","tencent")) {
+    $file = "$name.dict.yaml"
+    Remove-Item -Force -ErrorAction SilentlyContinue "$file"
+    Invoke-WebRequest -OutFile "$r\dicts\$file" -Uri `
+      "https://raw.githubusercontent.com/iDvel/rime-ice/$dic_ver/cn_dicts/$file"
+  }
+
+  foreach ($f in @("csa.dict.yaml", "csa.schema.yaml", "default.custom.yaml",
+      "double_pinyin_flypy.custom.yaml", "imported.dict.yaml", "weasel.custom.yaml",
+      "dicts\emoji.txt", "dicts\math.txt", "lua\csa_processor.lua")) {
+    Remove-Item -Force -ErrorAction SilentlyContinue "$f"
+    New-Item -Type SymbolicLink -Path "$r\$f" -Value `
+        "{{justfile_directory()}}\darwin\Library\Rime\$f" > $null
+  }
+
+[windows]
+remove:
+  #!powershell.exe
+
+  $h = "$HOME\AppData\Roaming"
+  $e = "$h\.emacs.d"
+  $r = "$h\Rime"
+
+  Remove-Item -Force -Recurse -ErrorAction SilentlyContinue -Path "$e\init.el", "$r\csa.dict.yaml",
+      "$r\csa.schema.yaml", "$r\default.custom.yaml", "$r\double_pinyin_flypy.custom.yaml",
+      "$r\imported.dict.yaml", "$r\weasel.custom.yaml", "$r\dicts\emoji.txt", "$r\dicts\math.txt",
+      "$r\lua\csa_processor.lua", "$r\double_pinyin.schema.yaml",
+      "$r\double_pinyin_flypy.schema.yaml", "$r\dicts\8105.dict.yaml", "$r\dicts\base.dict.yaml",
+      "$r\dicts\ext.dict.yaml", "$r\dicts\others.dict.yaml", "$r\dicts\tencent.dict.yaml"
