@@ -16,29 +16,33 @@ _darwin:
 
   rime="${HOME}/Library/Rime"
 
-  dpy_ver="69bf85d4dfe8bac139c36abbd68d530b8b6622ea"
+  dpy_ver="01a13287cbd27819be1c34fa1ddc1b3643d5001b"
   for name in {"double_pinyin","double_pinyin_flypy"}; do
     file="${name}.schema.yaml"
     curl -LSso "${rime}/${file}" \
          "https://raw.githubusercontent.com/rime/rime-double-pinyin/${dpy_ver}/${file}"
   done
 
-  dic_ver="2025.04.06"
+  dic_ver="2026.06.03"
   for name in {"8105","base","ext","others","tencent"}; do
     file="${name}.dict.yaml"
     curl -LSso "${rime}/dicts/${file}" \
          "https://raw.githubusercontent.com/iDvel/rime-ice/${dic_ver}/cn_dicts/${file}"
   done
 
+[unix]
 _common:
   @{{stow}} common
 
+[unix]
 _server:
   @{{stow}} server
 
+[unix]
 @setup pkg *pkgs:
   {{just}} "_{{pkg}}"
   {{ if pkgs != "" { just + " setup " + pkgs } else { "" } }}
 
+[unix]
 remove +pkgs:
   @{{stow}} -D {{pkgs}}
