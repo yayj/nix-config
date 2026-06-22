@@ -14,8 +14,6 @@ _darwin:
 
   {{stow}} darwin
 
-  chmod 700 "${HOME}/.gnupg"
-
   rime="${HOME}/Library/Rime"
 
   dpy_ver="69bf85d4dfe8bac139c36abbd68d530b8b6622ea"
