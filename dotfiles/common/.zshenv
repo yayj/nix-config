@@ -6,7 +6,7 @@ if [[ -d ~/.nix-profile/bin && ! ":$PATH:" =~ ":$HOME/.nix-profile/bin:" ]]; the
   export PATH="$HOME/.nix-profile/bin:$PATH"
 fi
 
-export EDITOR="emacsclient -s ${EMACS_SOCK} -a ''  -t"
+export EDITOR="emacsclient -s ${EMACS_SOCK} -a ''  -r"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
