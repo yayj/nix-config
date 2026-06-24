@@ -4,8 +4,7 @@ patch:
   style:
     color_scheme: wechat_light
     color_scheme_dark: wechat_dark
-    text_orientation: horizontal
-    candidate_list_layout: linear
+    horizontal: true
     font_face: LXGW WenKai
 
   # 皮肤主题
