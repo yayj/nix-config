@@ -50,51 +50,87 @@ remove +pkgs:
   @{{stow}} -D {{pkgs}}
 
 [windows]
-setup:
+_create_link path value:
+  #!powershell.exe
+  Remove-Item -Force -ErrorAction SilentlyContinue "{{path}}"
+  New-Item -Type SymbolicLink -Path "{{path}}" -Value "{{justfile_directory()}}\{{value}}" > $null
+
+[windows]
+_download base dir file:
+  #!powershell.exe
+  Remove-Item -Force -ErrorAction SilentlyContinue "{{dir}}\{{file}}"
+  Invoke-WebRequest -OutFile "{{dir}}\{{file}}" -Uri "{{base}}/{{file}}"
+
+[windows]
+setup weasel_ver = "0.17.4":
   #!powershell.exe
 
-  $h = "$HOME\AppData\Roaming"
-  $e = "$h\.emacs.d"
-  $r = "$h\Rime"
+  $e = "$env:APPDATA\.emacs.d"
+  $r = "$env:APPDATA\Rime"
 
   New-Item -Type Directory -Force -Path "$e", "$r\dicts", "$r\lua"  > $null
-  New-Item -Type SymbolicLink -Path "$e\init.el" -Value ".\common\.emacs.d\init.el" > $null
+
+  {{just}} _create_link "$e\init.el" "common\.emacs.d\init.el"
 
   $dpy_ver = "01a13287cbd27819be1c34fa1ddc1b3643d5001b"
+  $dpy_uri = "https://raw.githubusercontent.com/rime/rime-double-pinyin/$dpy_ver"
   foreach ($name in @("double_pinyin","double_pinyin_flypy")) {
-    $file = "$name.schema.yaml"
-    Remove-Item -Force -ErrorAction SilentlyContinue "$file"
-    Invoke-WebRequest -OutFile "$r\$file" -Uri `
-      "https://raw.githubusercontent.com/rime/rime-double-pinyin/$dpy_ver/$file"
+    {{just}} _download "$dpy_uri" "$r" "$name.schema.yaml"
   }
 
-  $dic_ver="2026.06.03"
+  $dic_ver = "2026.06.03"
+  $dic_uri = "https://raw.githubusercontent.com/iDvel/rime-ice/$dic_ver/cn_dicts"
   foreach ($name in @("8105","base","ext","others","tencent")) {
-    $file = "$name.dict.yaml"
-    Remove-Item -Force -ErrorAction SilentlyContinue "$file"
-    Invoke-WebRequest -OutFile "$r\dicts\$file" -Uri `
-      "https://raw.githubusercontent.com/iDvel/rime-ice/$dic_ver/cn_dicts/$file"
+    {{just}} _download "$dic_uri" "$r\dicts" "$name.dict.yaml"
   }
 
   foreach ($f in @("csa.dict.yaml", "csa.schema.yaml", "default.custom.yaml",
-      "double_pinyin_flypy.custom.yaml", "imported.dict.yaml", "weasel.custom.yaml",
+      "double_pinyin_flypy.custom.yaml", "imported.dict.yaml",
       "dicts\emoji.txt", "dicts\math.txt", "lua\csa_processor.lua")) {
-    Remove-Item -Force -ErrorAction SilentlyContinue "$f"
-    New-Item -Type SymbolicLink -Path "$r\$f" -Value `
-        "{{justfile_directory()}}\darwin\Library\Rime\$f" > $null
+      {{just}} _create_link "$r\$f" "darwin\Library\Rime\$f"
   }
+
+  $shell = New-Object -ComObject WScript.Shell
+  $startup = $shell.SpecialFolders("Startup")
+  $shortcut = $shell.CreateShortcut("$startup\WeaselDeploy.lnk")
+  $shortcut.TargetPath = "{{just_executable()}}"
+  $shortcut.Arguments = "-f {{justfile()}} _deploy {{weasel_ver}}"
+  $shortcut.Save()
+
+  {{just}} _deploy "{{weasel_ver}}"
+
+[windows]
+_deploy weasel_ver:
+  #!powershell.exe
+
+  $rime = "$env:APPDATA\Rime"
+  $file = "$rime\weasel.custom.yaml"
+  $orig = "{{justfile_directory()}}\darwin\Library\Rime\weasel.custom.yaml"
+  $exe = "$env:ProgramFiles\Rime\weasel-{{weasel_ver}}\WeaselDeployer.exe"
+
+  Remove-Item -Force -ErrorAction SilentlyContinue -Path "$file"
+  &"$exe" /deploy
+
+  Start-Sleep -Seconds 5
+
+  Remove-Item -Force -ErrorAction SilentlyContinue -Path "$file"
+  New-Item -Type SymbolicLink -Path "$file" -Value "$orig" > $null
+  &"$exe" /deploy
 
 [windows]
 remove:
   #!powershell.exe
 
-  $h = "$HOME\AppData\Roaming"
-  $e = "$h\.emacs.d"
-  $r = "$h\Rime"
+  $e = "$env:APPDATA\.emacs.d"
+  $r = "$env:APPDATA\Rime"
+
+  $shell = New-Object -ComObject WScript.Shell
+  $startup = $shell.SpecialFolders("Startup")
 
   Remove-Item -Force -Recurse -ErrorAction SilentlyContinue -Path "$e\init.el", "$r\csa.dict.yaml",
       "$r\csa.schema.yaml", "$r\default.custom.yaml", "$r\double_pinyin_flypy.custom.yaml",
-      "$r\imported.dict.yaml", "$r\weasel.custom.yaml", "$r\dicts\emoji.txt", "$r\dicts\math.txt",
-      "$r\lua\csa_processor.lua", "$r\double_pinyin.schema.yaml",
-      "$r\double_pinyin_flypy.schema.yaml", "$r\dicts\8105.dict.yaml", "$r\dicts\base.dict.yaml",
-      "$r\dicts\ext.dict.yaml", "$r\dicts\others.dict.yaml", "$r\dicts\tencent.dict.yaml"
+      "$r\imported.dict.yaml", "$r\weasel.custom.yaml",
+      "$r\dicts\emoji.txt", "$r\dicts\math.txt", "$r\lua\csa_processor.lua",
+      "$r\double_pinyin.schema.yaml", "$r\double_pinyin_flypy.schema.yaml",
+      "$r\dicts\8105.dict.yaml", "$r\dicts\base.dict.yaml", "$r\dicts\ext.dict.yaml",
+      "$r\dicts\others.dict.yaml", "$r\dicts\tencent.dict.yaml", "$startup\WeaselDeploy.lnk"
