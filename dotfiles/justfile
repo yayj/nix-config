@@ -3,134 +3,157 @@
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
 just := just_executable() + " -f " + justfile()
+stow := "stow --override='.*' --no-folding -d " + justfile_directory()
 
-stow := "stow --override='.*' --no-folding -t ${HOME} -d " + justfile_directory()
+dpy_ver := "01a13287cbd27819be1c34fa1ddc1b3643d5001b"
+dpy_uri := "https://raw.githubusercontent.com/rime/rime-double-pinyin/" + dpy_ver
+dic_ver := "2026.06.03"
+dic_uri := "https://raw.githubusercontent.com/iDvel/rime-ice/" + dic_ver + "/cn_dicts"
 
 help:
   @{{just}} --list
 
+[windows]
+_rime cmd:
+  #!powershell.exe
+
+  $files = @("csa.dict.yaml", "csa.schema.yaml", "default.custom.yaml",
+      "double_pinyin_flypy.custom.yaml", "imported.dict.yaml", "weasel.custom.yaml",
+      "dicts\emoji.txt", "dicts\math.txt", "lua\csa_processor.lua")
+  $schemas = @("double_pinyin.schema.yaml","double_pinyin_flypy.schema.yaml")
+  $dicts = @("8105.dict.yaml","base.dict.yaml","ext.dict.yaml","others.dict.yaml","tencent.dict.yaml")
+  $deployer = "$env:ProgramFiles\Rime\weasel-0.17.4\WeaselDeployer.exe"
+  $src = "{{justfile_directory()}}\rime"
+  $rime = "$env:APPDATA\Rime"
+  $shell = New-Object -ComObject WScript.Shell
+  $startup = $shell.SpecialFolders("Startup")
+  $link = "$startup\WeaselDeploy.lnk"
+
+  if ("setup" -eq "{{cmd}}") {
+    New-Item -Type Directory -Force -Path "$rime\dicts", "$rime\lua" > $null
+
+    foreach ($f in $schemas) {
+      Invoke-WebRequest -Uri "{{dpy_uri}}/$f" -OutFile "$rime\$f"
+    }
+
+    foreach ($f in $dicts) {
+      Invoke-WebRequest -Uri "{{dic_uri}}/$f" -OutFile "$rime\dicts\$f"
+    }
+
+    foreach ($f in $files) {
+      New-Item -Type SymbolicLink -Path "$rime\$f" -Value "$src\$f" -Force > $null
+    }
+
+    $shortcut = $shell.CreateShortcut("$link")
+    $shortcut.TargetPath = "{{just_executable()}}"
+    $shortcut.Arguments = "-f {{justfile()}} _rime deploy"
+    $shortcut.Save()
+  }
+  elseif ("deploy" -eq "{{cmd}}") {
+    $f = "weasel.custom.yaml"
+
+    Remove-Item -Force -ErrorAction Ignore -Path "$rime\$f"
+    &"$deployer" /deploy
+
+    Start-Sleep -Seconds 5
+
+    New-Item -Force -Type SymbolicLink -Path "$rime\$f" -Value "$src\$f" > $null
+    &"$deployer" /deploy
+  }
+  else {
+    foreach ($f in $files) {
+      Remove-Item -Force -ErrorAction Ignore -Path "$rime\$f"
+    }
+    foreach ($f in $dicts) {
+      Remove-Item -Force -ErrorAction Ignore -Path "$rime\dicts\$f"
+    }
+    foreach ($f in $schemas) {
+      Remove-Item -Force -ErrorAction Ignore -Path "$rime\$f"
+    }
+    Remove-Item -Force -ErrorAction Ignore -Path "$link"
+  }
+
+[unix]
+_setup_common:
+  @{{stow}} -t "${HOME}" common
+
+[windows]
+_setup_common:
+  #!powershell.exe
+  $s = "{{justfile_directory()}}\common\.emacs.d"
+  $d = "$env:APPDATA\.emacs.d"
+  $f = "init.el"
+  New-Item -Type Directory -Force -Path "$d"  > $null
+  New-Item -Force -Type SymbolicLink -Path "$d\$f" -Value "$s\$f" > $null
+
+[unix]
+_remove_common:
+  @{{stow}} -D -t "${HOME}" common
+
+[windows]
+@_remove_common:
+  Remove-Item -Force -ErrorAction Ignore "$env:APPDATA\.emacs.d\init.el"
+
 [macos]
-_darwin:
+_setup_darwin:
+  @{{stow}} -t "${HOME}" darwin
+
+[macos]
+_remove_darwin:
+  @{{stow}} -D -t "${HOME}" darwin
+
+[unix]
+_setup_server:
+  @{{stow}} -t "${HOME}" server
+
+[unix]
+_remove_server:
+  @{{stow}} -D -t "${HOME}" server
+
+[macos]
+_setup_rime:
   #!/bin/sh
   set -eu
 
-  {{stow}} darwin
-
   rime="${HOME}/Library/Rime"
+  {{stow}} -t "${rime}" rime
 
-  dpy_ver="01a13287cbd27819be1c34fa1ddc1b3643d5001b"
   for name in {"double_pinyin","double_pinyin_flypy"}; do
     file="${name}.schema.yaml"
-    curl -LSso "${rime}/${file}" \
-         "https://raw.githubusercontent.com/rime/rime-double-pinyin/${dpy_ver}/${file}"
+    curl -LSso "${rime}/${file}" "{{dpy_uri}}/${file}"
   done
 
-  dic_ver="2026.06.03"
   for name in {"8105","base","ext","others","tencent"}; do
     file="${name}.dict.yaml"
-    curl -LSso "${rime}/dicts/${file}" \
-         "https://raw.githubusercontent.com/iDvel/rime-ice/${dic_ver}/cn_dicts/${file}"
+    curl -LSso "${rime}/dicts/${file}" "{{dic_uri}}/${file}"
   done
 
-[unix]
-_common:
-  @{{stow}} common
+[macos]
+_remove_rime:
+  #!/bin/sh
+  set -eu
 
-[unix]
-_server:
-  @{{stow}} server
+  rime="${HOME}/Library/Rime"
+  {{stow}} -t "${rime}" -D rime
 
-[unix]
+  for name in {"double_pinyin","double_pinyin_flypy"}; do
+    rm -f "${rime}/${name}.schema.yaml"
+  done
+
+  for name in {"8105","base","ext","others","tencent"}; do
+    rm -f "${rime}/dicts/${name}.dict.yaml"
+  done
+
+[windows]
+_setup_rime: (_rime "setup")
+
+[windows]
+_remove_rime: (_rime "remove")
+
 @setup pkg *pkgs:
-  {{just}} "_{{pkg}}"
+  {{just}} "_setup_{{pkg}}"
   {{ if pkgs != "" { just + " setup " + pkgs } else { "" } }}
 
-[unix]
-remove +pkgs:
-  @{{stow}} -D {{pkgs}}
-
-[windows]
-_create_link path value:
-  #!powershell.exe
-  Remove-Item -Force -ErrorAction SilentlyContinue "{{path}}"
-  New-Item -Type SymbolicLink -Path "{{path}}" -Value "{{justfile_directory()}}\{{value}}" > $null
-
-[windows]
-_download base dir file:
-  #!powershell.exe
-  Remove-Item -Force -ErrorAction SilentlyContinue "{{dir}}\{{file}}"
-  Invoke-WebRequest -OutFile "{{dir}}\{{file}}" -Uri "{{base}}/{{file}}"
-
-[windows]
-setup weasel_ver = "0.17.4":
-  #!powershell.exe
-
-  $e = "$env:APPDATA\.emacs.d"
-  $r = "$env:APPDATA\Rime"
-
-  New-Item -Type Directory -Force -Path "$e", "$r\dicts", "$r\lua"  > $null
-
-  {{just}} _create_link "$e\init.el" "common\.emacs.d\init.el"
-
-  $dpy_ver = "01a13287cbd27819be1c34fa1ddc1b3643d5001b"
-  $dpy_uri = "https://raw.githubusercontent.com/rime/rime-double-pinyin/$dpy_ver"
-  foreach ($name in @("double_pinyin","double_pinyin_flypy")) {
-    {{just}} _download "$dpy_uri" "$r" "$name.schema.yaml"
-  }
-
-  $dic_ver = "2026.06.03"
-  $dic_uri = "https://raw.githubusercontent.com/iDvel/rime-ice/$dic_ver/cn_dicts"
-  foreach ($name in @("8105","base","ext","others","tencent")) {
-    {{just}} _download "$dic_uri" "$r\dicts" "$name.dict.yaml"
-  }
-
-  foreach ($f in @("csa.dict.yaml", "csa.schema.yaml", "default.custom.yaml",
-      "double_pinyin_flypy.custom.yaml", "imported.dict.yaml",
-      "dicts\emoji.txt", "dicts\math.txt", "lua\csa_processor.lua")) {
-      {{just}} _create_link "$r\$f" "darwin\Library\Rime\$f"
-  }
-
-  $shell = New-Object -ComObject WScript.Shell
-  $startup = $shell.SpecialFolders("Startup")
-  $shortcut = $shell.CreateShortcut("$startup\WeaselDeploy.lnk")
-  $shortcut.TargetPath = "{{just_executable()}}"
-  $shortcut.Arguments = "-f {{justfile()}} _deploy {{weasel_ver}}"
-  $shortcut.Save()
-
-  {{just}} _deploy "{{weasel_ver}}"
-
-[windows]
-_deploy weasel_ver:
-  #!powershell.exe
-
-  $rime = "$env:APPDATA\Rime"
-  $file = "$rime\weasel.custom.yaml"
-  $orig = "{{justfile_directory()}}\darwin\Library\Rime\weasel.custom.yaml"
-  $exe = "$env:ProgramFiles\Rime\weasel-{{weasel_ver}}\WeaselDeployer.exe"
-
-  Remove-Item -Force -ErrorAction SilentlyContinue -Path "$file"
-  &"$exe" /deploy
-
-  Start-Sleep -Seconds 5
-
-  Remove-Item -Force -ErrorAction SilentlyContinue -Path "$file"
-  New-Item -Type SymbolicLink -Path "$file" -Value "$orig" > $null
-  &"$exe" /deploy
-
-[windows]
-remove:
-  #!powershell.exe
-
-  $e = "$env:APPDATA\.emacs.d"
-  $r = "$env:APPDATA\Rime"
-
-  $shell = New-Object -ComObject WScript.Shell
-  $startup = $shell.SpecialFolders("Startup")
-
-  Remove-Item -Force -Recurse -ErrorAction SilentlyContinue -Path "$e\init.el", "$r\csa.dict.yaml",
-      "$r\csa.schema.yaml", "$r\default.custom.yaml", "$r\double_pinyin_flypy.custom.yaml",
-      "$r\imported.dict.yaml", "$r\weasel.custom.yaml",
-      "$r\dicts\emoji.txt", "$r\dicts\math.txt", "$r\lua\csa_processor.lua",
-      "$r\double_pinyin.schema.yaml", "$r\double_pinyin_flypy.schema.yaml",
-      "$r\dicts\8105.dict.yaml", "$r\dicts\base.dict.yaml", "$r\dicts\ext.dict.yaml",
-      "$r\dicts\others.dict.yaml", "$r\dicts\tencent.dict.yaml", "$startup\WeaselDeploy.lnk"
+@remove pkg *pkgs:
+  {{just}} "_remove_{{pkg}}"
+  {{ if pkgs != "" { just + " remove " + pkgs } else { "" } }}
