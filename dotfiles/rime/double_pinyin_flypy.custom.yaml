@@ -3,10 +3,14 @@ patch:
     - name: ascii_mode
       states: [中, 英]
       reset: 0
+    - name: simplification
+      states: [漢, 汉]
+      reset: 1
   "engine/translators/+":
     - table_translator@emoji
     - table_translator@math
-  translator/dictionary: imported
+  "translator/dictionary+":
+    - imported
   emoji:
     dictionary: ""
     user_dict: dicts/emoji
